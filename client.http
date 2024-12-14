@@ -1,0 +1,87 @@
+post http://localhost:3000/user/signup
+Content-Type: application/json
+
+{
+    "name" : "Hemanth",
+    "email" : "hemanth@gmail.com",
+    "pass" : "password",
+    "regId" : "21501A05F6",
+    "role" : "Admin"
+}
+
+###
+put http://localhost:3000/user/login 
+Content-Type: application/json
+
+{
+    "email" : "hemanth@gmail.com",
+    "pass" : "password"
+}
+
+###
+patch http://localhost:7000/user/changePass
+Content-Type: application/json
+
+{
+    "email" : "hemanth@gmail.com",
+    "pass" : "password",
+    "newPass" : "hemusomu"
+}
+
+###
+get http://localhost:7000/user/profile/hemanth@gmail.com
+
+###
+post http://localhost:3000/event/addEvent
+Content-Type: application/json
+
+{
+    "type" : "Webinar",
+    "hostName" : "hemanth",
+    "scheduledAt" : "2024-12-09T14:52:45.351Z",
+    "period" : "180",
+    "status" : "active",
+    "description" : "sample description"
+}
+
+###
+patch http://localhost:3000/event/closeEvent/6755b32c6b6b61caa7236f0a
+Content-Type: application/json
+
+###
+patch http://localhost:3000/event/updateEventStatus
+Content-Type: application/json
+
+###
+get http://localhost:3000/event/getEvents/active
+Content-Type: application/json
+
+###
+post http://localhost:3000/chat/addChat
+Content-Type: application/json
+
+{
+    "reciever" :  {
+        "_id": {
+            "$oid": "6755497406ee0e031d80abc4"
+        },
+        "name": "Sample User",
+        "email": "sampleUser@example.com",
+        "password": "$2a$10$V8r22ERqU1Z4TVmDWzrQVuIXRAd/nGEStNddLSkAJWULpr.2q0PQW",
+        "regId": "21501A05F6",
+        "role": "student",
+        "__v": 0
+    },
+    "sender" :{
+        "_id": {
+            "$oid": "675561ca22f1da8a9c8a1e50"
+        },
+        "name": "Hemanth",
+        "email": "hemanth@gmail.com",
+        "password": "$2a$10$e3eukVXLMzwbpENUnuVlEOoHvUuOjOVzFdCzXR9VW4UtMetQnxQ/C",
+        "regId": "21501A05F6",
+        "role": "admin",
+        "__v": 0
+    },
+    "message" : "Test Message"
+}
