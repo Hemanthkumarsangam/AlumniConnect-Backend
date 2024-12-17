@@ -62,11 +62,9 @@ eventApp.patch('/updateEventStatus', async (req, res) => {
   }
 });
 
-eventApp.get('/getEvents/:id', async (req, res) => {
-  const status = req.params.id;
-  const result = await Events.find({status})
-  res.send({result})
+eventApp.get('/getEvents', async (req, res) => {
+  const events = await Events.find()
+  res.send(events)
 })
-  
 
 module.exports = eventApp
