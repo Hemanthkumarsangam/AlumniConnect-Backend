@@ -1,7 +1,111 @@
 const express = require('express');
+const dotenv = require('dotenv');
 const bcryptjs = require('bcryptjs');
 const User = require('../models/userModel');
 const userApp = express.Router();
+const { google } = require('googleapis');
+const jwt = require('jsonwebtoken');
+const axios = require('axios');
+
+dotenv.config()
+
+const authorizationUrl = process.env.LINKEDIN_AUTH_URL;
+const tokenUrl = process.env.LINKEDIN_TOKEN_URL;
+const clientId = process.env.LINKEDIN_CLIENT_ID;
+const clientSecret = process.env.LINKEDIN_CLIENT_SECRET;
+const redirectUri = process.env.LINKEDIN_REDIRECT_URI;
+const state = process.env.LINKEDIN_STATE;
+
+const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+const REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI;
+
+const oauth2Client = new google.auth.OAuth2(
+  CLIENT_ID,
+  CLIENT_SECRET,
+  REDIRECT_URI
+);
+
+const SCOPES = ['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email'];
+
+userApp.get('/signinWithGoogle', (req, res) => {
+  const url = oauth2Client.generateAuthUrl({
+    access_type: 'offline',
+    scope: SCOPES,
+  });
+  res.redirect(url);
+});
+
+userApp.get('/gcallback', async (req, res) => {
+  const code = req.query.code;
+
+  if (!code) {
+    return res.status(400).send('Authorization code is missing.');
+  }
+
+  try {
+    const { tokens } = await oauth2Client.getToken(code);
+    oauth2Client.setCredentials(tokens);
+    const oauth2 = google.oauth2({
+      auth: oauth2Client,
+      version: 'v2',
+    });
+    const userInfo = await oauth2.userinfo.get();
+    const frontendRedirectUri = `${process.env.FRONTEND_URL}/signup`;
+    const token = jwt.sign(
+      { name: userInfo.data.name, email: userInfo.data.email, imageUrl: userInfo.data.picture},
+      process.env.JWT_SECRET, 
+      { expiresIn: '1h' }
+    );
+    res.redirect(`${frontendRedirectUri}?token=${token}`);
+  } catch (error) {
+    console.error('Error during Google OAuth process:', error);
+    res.status(500).send('Authentication failed.');
+  }
+});
+
+userApp.get('/signinWithLinkedIn', (req, res) => {
+  const authUrl = `${authorizationUrl}?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=openid%20profile%20email`;
+  res.redirect(authUrl);
+});
+
+userApp.get('/lcallback', async (req, res) => {
+  const { code, state: returnedState } = req.query;
+  if (returnedState !== state) {
+    return res.status(400).send('State mismatch, possible CSRF attack');
+  }
+
+  try {
+    const response = await axios.post(tokenUrl, null, {
+      params: {
+        grant_type: 'authorization_code',
+        code,
+        redirect_uri: redirectUri,
+        client_id: clientId,
+        client_secret: clientSecret,
+      },
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+    const { access_token } = response.data;
+    const userInfo = await axios.get(`${process.env.LINKEDIN_USERINFO_URL}`, {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    });
+    const frontendRedirectUri = `${process.env.FRONTEND_URL}/signup`;
+    const token = jwt.sign(
+      { name: userInfo.data.name, email: userInfo.data.email, imageUrl: userInfo.data.picture},
+      process.env.JWT_SECRET, 
+      { expiresIn: '1h' }
+    );
+    res.redirect(`${frontendRedirectUri}?id=${token}`);
+  } catch (error) {
+    console.error('Error getting access token or user data', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
 
 userApp.post('/signup', async (req, res) => {
   const {name, pass, email, regId} = req.body
@@ -70,6 +174,17 @@ userApp.get('/profile/:email', async (req, res) => {
   const email = req.params.email
   const result = await User.findOne({email})
   res.send(result)
+})
+
+userApp.post('/verifyToken', async (req, res) => {
+  const token = req.body.token
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    res.json({ name: decoded.name, email: decoded.email, imageUrl: decoded.imageUrl});
+  } catch (error) {
+    console.error('Invalid token:', error);
+    res.status(401).send('Unauthorized');
+  }
 })
 
 module.exports = userApp;
