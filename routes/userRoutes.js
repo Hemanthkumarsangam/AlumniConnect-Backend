@@ -57,7 +57,7 @@ userApp.get('/gcallback', async (req, res) => {
       process.env.JWT_SECRET, 
       { expiresIn: '1h' }
     );
-    res.redirect(`${frontendRedirectUri}?token=${token}`);
+    res.redirect(`${frontendRedirectUri}?id=${token}`);
   } catch (error) {
     console.error('Error during Google OAuth process:', error);
     res.status(500).send('Authentication failed.');
