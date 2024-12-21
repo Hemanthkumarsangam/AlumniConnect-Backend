@@ -6,6 +6,9 @@ const userApp = express.Router();
 const { google } = require('googleapis');
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
+const multer = require('multer')
+const path = require('path')
+const fs = require('fs')
 
 dotenv.config()
 
@@ -163,17 +166,27 @@ userApp.patch('/changePass', async (req, res) => {
 })
 
 userApp.patch('/changeRole', async (req, res) => {
-    const {yearId} = req.body;
-    await User.updateMany(
-        {regId : {$regex : `^${yearId}`}},
-        {$set : {role : ''}}
-    )
+  const {yearId} = req.body;
+  await User.updateMany(
+    {regId : {$regex : `^${yearId}`}},
+    {$set : {role : ''}}
+  )
 })
 
 userApp.get('/profile/:email', async (req, res) => {
   const email = req.params.email
   const result = await User.findOne({email})
   res.send(result)
+})
+
+userApp.patch('/checkUsername', async (req, res) => {
+  const {username} = req.body
+  const result = await User.findOne({username})
+  if(result === null){
+    res.send({message : 'valid'})
+  }else{
+    res.send({message : 'username already exists'})
+  }
 })
 
 userApp.post('/verifyToken', async (req, res) => {
@@ -185,6 +198,30 @@ userApp.post('/verifyToken', async (req, res) => {
     console.error('Invalid token:', error);
     res.status(401).send('Unauthorized');
   }
+})
+
+const storage = multer.diskStorage({
+  destination : (req, file, cb) => {
+    cb(null, 'profilepics/')
+  },
+  filename : (req, file, cb) => {
+    const ext = path.extname(file.originalname); 
+    const uname = req.body.uname || 'nonamefound'
+    cb(null, `${uname}${ext}`);
+  }
+})
+
+const upload = multer({ storage })
+
+userApp.post('/profilepicUpload', upload.single('file'), async (req, res) => {
+  const ext = path.extname(req.file.originalname);  
+  const uname = req.body.uname || 'nonamefound';  
+  const newFilename = `${uname}${ext}`; 
+  const oldPath = path.join('profilepics', req.file.filename); 
+  const newPath = path.join('profilepics', newFilename);
+  fs.rename(oldPath, newPath, ()=>{})
+  const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${newFilename}`;
+  res.send({ imageUrl });
 })
 
 module.exports = userApp;

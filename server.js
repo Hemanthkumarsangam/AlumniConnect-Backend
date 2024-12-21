@@ -7,6 +7,7 @@ const eventApp = require('./routes/eventRoutes');
 const socketHandler = require('./socket');  
 const app = express();
 const cors = require('cors')
+const path = require('path');
 
 dotenv.config()
 app.use(cors())
@@ -15,6 +16,7 @@ connectDB()
 
 app.use('/user', userApp)
 app.use('/event', eventApp)
+app.use('/uploads', express.static(path.join(__dirname, 'profilepics')))
 
 const server = http.createServer(app)
 socketHandler(server)

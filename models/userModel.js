@@ -10,6 +10,11 @@ const userSchema = new mongoose.Schema({
         required : true,
         unique : [true, 'user already exists'],
     },
+    username : {
+        type : 'string',
+        required : true,
+        unique : [true, 'username already exists'],
+    },
     password : {
         required : true,
         type : 'string',
@@ -23,6 +28,16 @@ const userSchema = new mongoose.Schema({
         enum : ['student, admin, alumni, staff'],
         default : 'student',
         required : true,
+    },
+    imageUrl : {
+        type : 'string',
+        required : true,
+    },
+    company : {
+        type : 'string',
+    },
+    designation : {
+        type : 'string',
     }
 })
 
