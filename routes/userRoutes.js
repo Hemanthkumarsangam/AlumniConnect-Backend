@@ -60,7 +60,8 @@ userApp.get('/gcallback', async (req, res) => {
       process.env.JWT_SECRET, 
       { expiresIn: '1h' }
     );
-    res.redirect(`${frontendRedirectUri}?id=${token}`);
+    const user = await User.findOne({email : userInfo.data.email})
+    user === null ? res.redirect(`${frontendRedirectUri}?user=new&id=${token}`) : res.redirect(`${frontendRedirectUri}?user=old&id=${token}`);
   } catch (error) {
     console.error('Error during Google OAuth process:', error);
     res.status(500).send('Authentication failed.');
@@ -103,7 +104,8 @@ userApp.get('/lcallback', async (req, res) => {
       process.env.JWT_SECRET, 
       { expiresIn: '1h' }
     );
-    res.redirect(`${frontendRedirectUri}?id=${token}`);
+    const user = await User.findOne({email : userInfo.data.email})
+    user === null ? res.redirect(`${frontendRedirectUri}?user=new&id=${token}`) : res.redirect(`${frontendRedirectUri}?user=old&id=${token}`);
   } catch (error) {
     console.error('Error getting access token or user data', error);
     res.status(500).send('Internal Server Error');
@@ -111,17 +113,14 @@ userApp.get('/lcallback', async (req, res) => {
 });
 
 userApp.post('/signup', async (req, res) => {
-  const {name, pass, email, regId} = req.body
-  const role = req.body.role || 'Student'
-  const existingUser = await User.findOne({email})
-  if(existingUser !== null){
-    res.send({message : `User already exists Try Logging in`})
-    return;
-  }
+  const {name, email, username, pass, regId, role, imageUrl, yop, branch, company, designation} = req.body
   const password = await bcryptjs.hash(pass, 10)
-  const user = new User({
-    name, password, email, regId, role
-  })
+  const user = role === 'alumni' ? new User({
+    name, email, username, password, regId, role, imageUrl, yop, branch, company, designation
+  }) :
+  new User({
+    name, email, username, password, regId, role, imageUrl, yop, branch
+  });
   try {
     const result = await user.save();
     res.send({message : `User Created successfully`, result });
@@ -185,7 +184,7 @@ userApp.patch('/checkUsername', async (req, res) => {
   if(result === null){
     res.send({message : 'valid'})
   }else{
-    res.send({message : 'username already exists'})
+    res.send({message : 'username already choosen'})
   }
 })
 

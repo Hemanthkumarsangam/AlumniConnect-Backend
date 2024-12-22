@@ -25,13 +25,55 @@ const userSchema = new mongoose.Schema({
     },
     role : {
         type : 'string',
-        enum : ['student, admin, alumni, staff'],
+        enum : ['student',' admin', 'alumni', 'staff'],
         default : 'student',
         required : true,
     },
     imageUrl : {
         type : 'string',
         required : true,
+    },
+    yop : {
+        type : 'string',
+        required : true,
+    },
+    branch : {
+        type : 'string',
+        required : true
+    },
+    participated : {
+        webinars : {
+            type : 'number',
+            default : 0,
+            required : true
+        },
+        mockInterviews : {
+            type : 'number',
+            default : 0,
+            required : true
+        },
+        workshops : {
+            type : 'number',
+            default : 0,
+            required : true
+        }
+    },
+    conducted : {
+        webinars : {
+            type : 'number',
+            default : 0,
+            required : true
+        },
+        mockInterviews : {
+            type : 'number',
+            default : 0,
+            required : true
+        },
+        workshops : {
+            type : 'number',
+            default : 0,
+            required : true
+        }
     },
     company : {
         type : 'string',
