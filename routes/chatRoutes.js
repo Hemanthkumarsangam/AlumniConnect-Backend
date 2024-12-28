@@ -1,8 +1,11 @@
-const Chats = require('../models/chatModel')
+const Chats = require('../models/chatModel');
+const express = require('express');
+const updtChat = express.Router();
 
-const updtChat = async (req, res) => {
-  const {sender, reciever, message} = req;
-  
-}
+updtChat.get('/getChat/:id', async (req, res) => {
+  const chatId = req.params.id;
+  const result = await Chats.find({chatId})
+  res.send(result)
+})
 
 module.exports = updtChat

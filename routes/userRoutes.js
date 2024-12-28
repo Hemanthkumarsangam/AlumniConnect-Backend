@@ -223,4 +223,9 @@ userApp.post('/profilepicUpload', upload.single('file'), async (req, res) => {
   res.send({ imageUrl });
 })
 
+userApp.get('/getUsers', async (req, res) => {
+  const users = await User.find()
+  res.send({users})
+})
+
 module.exports = userApp;
