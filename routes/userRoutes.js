@@ -130,15 +130,14 @@ userApp.post('/signup', async (req, res) => {
 })
 
 userApp.put('/login', async (req, res) => {
-  const {email, pass} = req.body;
+  const {email, pass} = req.body;0
   const user = await User.findOne({email})
   if(user === null){
     res.send({message : `User not found try SignUp again`})
     return;
   }
   if(await bcryptjs.compare(pass, user.password)){
-    const role = user.role;
-    res.send({email, role, message: `Successfull`})
+    res.send({name : user.name, role : user.role, message: `Successfull`})
     return
   }
   res.send({message : `Invalid password`})

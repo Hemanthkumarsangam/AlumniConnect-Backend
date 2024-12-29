@@ -4,7 +4,7 @@ const updtChat = express.Router();
 
 updtChat.get('/getChat/:id', async (req, res) => {
   const chatId = req.params.id;
-  const result = await Chats.find({chatId})
+  const result = await Chats.findOne({chatId})
   res.send(result)
 })
 
