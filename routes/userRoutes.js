@@ -115,12 +115,9 @@ userApp.get('/lcallback', async (req, res) => {
 userApp.post('/signup', async (req, res) => {
   const {name, email, username, pass, regId, role, imageUrl, yop, branch, company, designation} = req.body
   const password = await bcryptjs.hash(pass, 10)
-  const user = role === 'alumni' ? new User({
+  const user = new User({
     name, email, username, password, regId, role, imageUrl, yop, branch, company, designation
-  }) :
-  new User({
-    name, email, username, password, regId, role, imageUrl, yop, branch
-  });
+  })
   try {
     const result = await user.save();
     res.send({message : `User Created successfully`, result });
@@ -228,11 +225,11 @@ userApp.get('/getUsers', async (req, res) => {
 })
 
 userApp.patch('/updateProfile', async (req, res) => {
-  const {name, email, regId, nEmail} = req.body
+  const {_id, name, email, regId, designation, company, branch, yop} = req.body
   try {
-    await User.findOneAndUpdate(
-      {email},
-      {name, regId, email: nEmail},
+    await User.findByIdAndUpdate(
+      {_id},
+      {name, regId, email, company, designation, branch, yop},
       {new : true}
     )
     res.send({message : 'Profile updated successfully'})
