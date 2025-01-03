@@ -61,7 +61,7 @@ userApp.get('/gcallback', async (req, res) => {
       { expiresIn: '1h' }
     );
     const user = await User.findOne({email : userInfo.data.email})
-    user === null ? res.redirect(`${frontendRedirectUri}?user=new&id=${token}`) : res.redirect(`${frontendRedirectUri}?user=old&id=${token}`);
+    user === null ? res.redirect(`${frontendRedirectUri}?user=new&id=${token}`) : res.redirect(`${frontendRedirectUri}?user=old&id=${token}&role=${user.role}&email=${user.email}&name=${user.name}`);
   } catch (error) {
     console.error('Error during Google OAuth process:', error);
     res.status(500).send('Authentication failed.');
@@ -105,7 +105,7 @@ userApp.get('/lcallback', async (req, res) => {
       { expiresIn: '1h' }
     );
     const user = await User.findOne({email : userInfo.data.email})
-    user === null ? res.redirect(`${frontendRedirectUri}?user=new&id=${token}`) : res.redirect(`${frontendRedirectUri}?user=old&id=${token}`);
+    user === null ? res.redirect(`${frontendRedirectUri}?user=new&id=${token}`) : res.redirect(`${frontendRedirectUri}?user=old&id=${token}&role=${user.role}&email=${user.email}&name=${user.name}`);
   } catch (error) {
     console.error('Error getting access token or user data', error);
     res.status(500).send('Internal Server Error');
@@ -225,6 +225,20 @@ userApp.post('/profilepicUpload', upload.single('file'), async (req, res) => {
 userApp.get('/getUsers', async (req, res) => {
   const users = await User.find()
   res.send({users})
+})
+
+userApp.patch('/updateProfile', async (req, res) => {
+  const {name, email, regId, nEmail} = req.body
+  try {
+    await User.findOneAndUpdate(
+      {email},
+      {name, regId, email: nEmail},
+      {new : true}
+    )
+    res.send({message : 'Profile updated successfully'})
+  } catch (error) {
+    res.send({message : 'Email already exists'})
+  }
 })
 
 module.exports = userApp;
