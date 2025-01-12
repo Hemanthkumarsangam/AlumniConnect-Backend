@@ -27,7 +27,7 @@ const socketHandler = (server) => {
       if (existing !== null) {  
         const res = await Chats.findByIdAndUpdate(  
           existing._id,  
-          { $push: { chat: { sender: sender.name, reciever: reciever.name, message: message, sentTime: new Date() } } },  
+          { $push: { chat: { sender: sender._id, reciever: reciever._id, message: message, sentTime: new Date() } } },  
           { new: true }  
         );  
         io.to(chatId).emit('message', { chat: res.chat });  
@@ -36,7 +36,7 @@ const socketHandler = (server) => {
 
       const chat = new Chats({  
         chatId,  
-        chat: [{ sender: sender.name, reciever: reciever.name, message: message, sentTime: new Date() }],  
+        chat: [{ sender: sender._id, reciever: reciever._id, message: message, sentTime: new Date() }],  
       });  
 
       try {  

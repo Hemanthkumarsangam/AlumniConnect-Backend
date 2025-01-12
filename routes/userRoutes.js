@@ -61,7 +61,7 @@ userApp.get('/gcallback', async (req, res) => {
       { expiresIn: '1h' }
     );
     const user = await User.findOne({email : userInfo.data.email})
-    user === null ? res.redirect(`${frontendRedirectUri}?user=new&id=${token}`) : res.redirect(`${frontendRedirectUri}?user=old&id=${token}&role=${user.role}&email=${user.email}&name=${user.name}`);
+    user === null ? res.redirect(`${frontendRedirectUri}?user=new&id=${token}`) : res.redirect(`${frontendRedirectUri}?user=old&id=${token}&role=${user.role}&email=${user.email}&_id=${user._id}`);
   } catch (error) {
     console.error('Error during Google OAuth process:', error);
     res.status(500).send('Authentication failed.');
@@ -105,7 +105,7 @@ userApp.get('/lcallback', async (req, res) => {
       { expiresIn: '1h' }
     );
     const user = await User.findOne({email : userInfo.data.email})
-    user === null ? res.redirect(`${frontendRedirectUri}?user=new&id=${token}`) : res.redirect(`${frontendRedirectUri}?user=old&id=${token}&role=${user.role}&email=${user.email}&name=${user.name}`);
+    user === null ? res.redirect(`${frontendRedirectUri}?user=new&id=${token}`) : res.redirect(`${frontendRedirectUri}?user=old&id=${token}&role=${user.role}&email=${user.email}&uid=${user._id}`);
   } catch (error) {
     console.error('Error getting access token or user data', error);
     res.status(500).send('Internal Server Error');
