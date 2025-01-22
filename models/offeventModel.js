@@ -17,6 +17,10 @@ const offeventSchema = mongoose.Schema({
         type : 'Date',
         required : true,
     },
+    duration : {
+        type : 'number',
+        required : true,
+    },
     coordinators : {
         type : [{
             name : {
@@ -26,11 +30,6 @@ const offeventSchema = mongoose.Schema({
             contact : {
                 type : 'string',
                 required : true,
-            },
-            designation : {
-                type : 'string',
-                required : true,
-                enum : ['Faculty', 'Student'],
             },
             email : {
                 type : 'string',
@@ -44,6 +43,10 @@ const offeventSchema = mongoose.Schema({
         required : true,
     },
     images : {
+        type : [],
+        required : true,
+    },
+    activities : {
         type : [],
         required : true,
     }

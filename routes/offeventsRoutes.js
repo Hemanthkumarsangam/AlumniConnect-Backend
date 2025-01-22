@@ -12,9 +12,9 @@ offEventApp.get('/getOffEvents', async (req, res) => {
 })
 
 offEventApp.post('/addOffEvent', async (req, res) => {
-    const {title, mode, description, date, coordinators, venue} = req.body
+    const {title, mode, description, date, duration, coordinators, venue, images, activites} = req.body
     const offEvent = new OffEvents({
-        title,mode,description,date,coordinators,venue
+        title,mode,description,date,coordinators,venue, duration, images, activites
     })
     try {
         const savedOffEvent = await offEvent.save()
