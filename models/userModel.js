@@ -80,6 +80,14 @@ const userSchema = new mongoose.Schema({
     },
     designation : {
         type : 'string',
+    },
+    skills: {
+        type: 'string',
+        required: true
+    },
+    about: {
+        type: 'string',
+        required: true
     }
 })
 

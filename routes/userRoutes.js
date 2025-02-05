@@ -113,10 +113,10 @@ userApp.get('/lcallback', async (req, res) => {
 });
 
 userApp.post('/signup', async (req, res) => {
-  const {name, email, username, pass, regId, role, imageUrl, yop, branch, company, designation} = req.body
+  const {name, email, username, pass, regId, role, imageUrl, yop, branch, company, designation, skills, about} = req.body
   const password = await bcryptjs.hash(pass, 10)
   const user = new User({
-    name, email, username, password, regId, role, imageUrl, yop, branch, company, designation
+    name, email, username, password, regId, role, imageUrl, yop, branch, company, designation, skills, about
   })
   try {
     const result = await user.save();
