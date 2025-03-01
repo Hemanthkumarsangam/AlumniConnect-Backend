@@ -4,11 +4,6 @@ const offeventSchema = mongoose.Schema({
         type : 'string',
         required : true,
     },
-    mode : {
-        type : 'string',
-        required : true,
-        enum : ['Online', 'Offline'],
-    },
     description : {
         type : 'string',
         required : true,
@@ -17,17 +12,13 @@ const offeventSchema = mongoose.Schema({
         type : 'Date',
         required : true,
     },
-    duration : {
-        type : 'number',
-        required : true,
-    },
-    coordinators : {
-        type : [{
+    coordinator : {
+        type : {
             name : {
                 type : 'string',
                 required : true,
             },
-            contact : {
+            phone : {
                 type : 'string',
                 required : true,
             },
@@ -35,20 +26,31 @@ const offeventSchema = mongoose.Schema({
                 type : 'string',
                 required : true,
             },
-        }],
+        },
         required : true,
     },
-    venue : {
+    location : {
         type : 'string',
         required : true,
     },
     images : {
-        type : [],
-        required : true,
+        type : ['string'],
     },
     activities : {
-        type : [],
+        type:['string'],
         required : true,
+    },
+    time : {
+        type : 'string',
+        required : true,
+    },
+    speaker: {
+        type: 'string',
+    },
+    feedback: {
+        type: 'string',
+        required: true,
+        defaultValue: '',
     }
 })
 

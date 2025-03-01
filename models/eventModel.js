@@ -6,6 +6,10 @@ const eventSchema = new mongoose.Schema({
         required : true,
         enum : ['Webinar', 'QA', 'Mock Interview', 'Workshop'],
     },
+    title : {
+        type: 'string',
+        required : true
+    },
     hostName : {
         type : 'string',
         required : true,
@@ -20,7 +24,7 @@ const eventSchema = new mongoose.Schema({
         required : true,
     },
     period : {
-        type : 'number',
+        type : 'string',
         required : true,
     },
     description : {
@@ -30,7 +34,7 @@ const eventSchema = new mongoose.Schema({
     status : {
         type : 'string',
         required : true,
-        default : 'Upcoming',
+        default : 'upcoming',
     },
     sessionId : {
         type : 'string',

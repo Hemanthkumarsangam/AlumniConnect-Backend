@@ -10,6 +10,7 @@ const userApp = require('./routes/userRoutes');
 const eventApp = require('./routes/eventRoutes');
 const offEventApp = require('./routes/offeventsRoutes'); 
 const updtChat = require('./routes/chatRoutes');
+const postApp = require('./routes/postRoutes');
 const app = express();
 
 dotenv.config()
@@ -22,6 +23,7 @@ app.use('/event', eventApp)
 app.use('/offEvent', offEventApp)
 app.use('/jobs', jobApp)
 app.use('/chat', updtChat)
+app.use('/post', postApp)
 app.use('/uploads', express.static(path.join(__dirname, 'profilepics')))
 
 const server = http.createServer(app)

@@ -12,12 +12,23 @@ offEventApp.get('/getOffEvents', async (req, res) => {
 })
 
 offEventApp.post('/addOffEvent', async (req, res) => {
-    const {title, mode, description, date, duration, coordinators, venue, images, activites} = req.body
+    const {title, coordinator, description, location, email, phone, date, from, to, activities} = req.body
+    const feedback = "..."
+    const highlights = []
+    const coor = {
+        name : coordinator,
+        phone : phone,
+        email : email
+    }
+    const time = `${from} - ${to}`
+    const dateTime = new Date(date);
+    const [hours, minutes] = to.split(":").map(Number);
+    dateTime.setHours(hours, minutes, 0, 0);
     const offEvent = new OffEvents({
-        title,mode,description,date,coordinators,venue, duration, images, activites
+        title, description, date: dateTime, coordinator: coor, location, time, activities, feedback, highlights
     })
     try {
-        const savedOffEvent = await offEvent.save()
+        const events = await offEvent.save()
         res.send({message : "Event successfully added", events})
     } catch (error) {
         console.log(error)

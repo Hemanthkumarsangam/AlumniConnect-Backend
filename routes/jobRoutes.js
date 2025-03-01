@@ -19,4 +19,11 @@ jobApp.post('/addJob', async (req, res) => {
     res.send({message : 'Job added successfully'})
 })
 
+jobApp.patch('/toggleStatus', async (req, res) => {
+    const job = await Jobs.findById(req.body.id)
+    job.isApplied = true
+    await job.save()
+    res.send({message : 'Status updated successfully'})
+})
+
 module.exports = jobApp;

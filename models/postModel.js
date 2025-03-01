@@ -13,16 +13,22 @@ const postSchema = mongoose.Schema({
     },
     likes: {
         type: 'number',
-        defaultValue: 0
+        defaultValue: 0,
     },
-    comments: {
-        type: [{
-            author: {
-                type: 'string'
-            },
-            comment: {
-                type: 'string'
-            }
-        }]
+    likedUsers: { 
+        type: [String], 
+        default: [] 
+    },
+    comments: { type: [{ user: String, userImage: String, comment: String }], default: [] },
+    authorImage : {
+        type: 'string',
+        required: true
+    },
+    date: {
+        type: 'Date',
+        required: true
     }
 })
+
+const Posts = mongoose.model('Posts', postSchema)
+module.exports = Posts
