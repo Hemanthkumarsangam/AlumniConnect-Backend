@@ -15,6 +15,7 @@ jobApp.get('/getJobs', async (req, res) => {
 
 jobApp.post('/addJob', async (req, res) => {
     const job = new Jobs(req.body)
+    console.log(req.body)
     await job.save()
     res.send({message : 'Job added successfully'})
 })

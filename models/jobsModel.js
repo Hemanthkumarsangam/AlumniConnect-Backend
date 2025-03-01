@@ -22,15 +22,9 @@ const jobSchema = new mongoose.Schema({
             required: true
         }
     },
-    experienceRange : {
-        from : {
-            type: Number,
-            required: true
-        },
-        to : {
-            type: Number,
-            required: true
-        }
+    experience: {
+        type: String,
+        required: true
     },
     applyLink : {
         type : 'string',
@@ -50,12 +44,13 @@ const jobSchema = new mongoose.Schema({
     },
     isApplied : {
         type : 'boolean',
-        default : false
+        default : false,
+        required: true
     },
     jobType : {
         type : 'string',
         required: true,
-        enum : ['Full Time', 'Part Time', 'Internship']
+        enum : ['Full-time', 'Part Time', 'Internship', 'Internship + PPO']
     }
 })
 
